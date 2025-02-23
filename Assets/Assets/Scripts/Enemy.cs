@@ -137,7 +137,7 @@ public class Enemy : MonoBehaviour
     }
 
 
-   protected void KillEnemy()
+   public virtual void KillEnemy()
 {
     if (deathEffectPrefab != null)
     {

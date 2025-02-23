@@ -25,6 +25,7 @@ public class Spawner : MonoBehaviour
     private float enemy4SpawnTime = 45f;
     private float enemy5SpawnTime = 60f;
     private float enemy6SpawnTime = 80f; // Время появления Enemy6
+    private float enemy7SpawnTime = 10f; // Время появления Enemy7
 
     private bool bossSpawned = false;  // Флаг для Enemy4
     private bool enemy6Spawned = false; // Флаг для Enemy6
@@ -61,6 +62,7 @@ public class Spawner : MonoBehaviour
         if (timeSinceStart >= enemy2SpawnTime) availableEnemies.Add("Enemy2");
         if (timeSinceStart >= enemy3SpawnTime) availableEnemies.Add("Enemy3");
         if (timeSinceStart >= enemy5SpawnTime) availableEnemies.Add("Enemy5");
+        if (timeSinceStart >= enemy7SpawnTime) availableEnemies.Add("Enemy7");
 
         if (availableEnemies.Count == 0) return;
 
@@ -90,7 +92,7 @@ public class Spawner : MonoBehaviour
 
             if (enemyScript != null)
             {
-                // Если спавним Enemy6, даем ему больше HP
+                // Если спавним Enemy6 или Enemy7, даем им больше HP
                 int hp = (enemyTag == "Enemy4" || enemyTag == "Enemy6") ? 40 : 10;
 
                 enemyScript.Initialize(player, this, hp, 20, 1, enemyCounter);

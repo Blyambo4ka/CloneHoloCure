@@ -5,7 +5,7 @@ public class FireTrail : MonoBehaviour
 {
     private int fireDamage;
     private float duration;
-    private float damageInterval = 0.5f;
+    private float damageInterval = 1f;
     
 
     private Animator anim; // Ссылка на аниматор
@@ -29,7 +29,7 @@ public class FireTrail : MonoBehaviour
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, 1f);
             foreach (Collider2D enemyCollider in hitEnemies)
             {
-                if (enemyCollider.CompareTag("Enemy"))
+                if (enemyCollider.CompareTag("Enemy") || enemyCollider.CompareTag("Enemy2") || enemyCollider.CompareTag("Enemy3") || enemyCollider.CompareTag("Enemy4") ||enemyCollider.CompareTag("Enemy5") || enemyCollider.CompareTag("Enemy6") ||enemyCollider.CompareTag("Enemy7"))
                 {
                     Enemy enemy = enemyCollider.GetComponent<Enemy>();
                     if (enemy != null)

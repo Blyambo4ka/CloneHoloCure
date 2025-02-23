@@ -8,16 +8,14 @@ public class CardController : MonoBehaviour
     public Text title;
     public Text description;
     public Button button;
+    
     public LightningStrike linkedAbility;
     public DashAbility linkedDashAbility;
     public AttackBoost linkedAttackBoost;
+    public AstralAbility linkedAstralAbility; // Добавлен астрал
 
     private Animator animator;
     private bool isSelected = false;
-
-
-
-
 
     void Awake()
     {
@@ -29,8 +27,7 @@ public class CardController : MonoBehaviour
             button.onClick.AddListener(SelectCard);
         }
         if (icon == null)
-         icon = GetComponentInChildren<Image>();
-
+            icon = GetComponentInChildren<Image>();
     }
 
     public void ApplyCardEffect()
@@ -57,6 +54,14 @@ public class CardController : MonoBehaviour
                 linkedAttackBoost.UnlockAbility();
             else
                 linkedAttackBoost.UpgradeAbility();
+        }
+
+        if (linkedAstralAbility != null) // Добавлена проверка Астрала
+        {
+            if (!linkedAstralAbility.isUnlocked)
+                linkedAstralAbility.UnlockAbility();
+            else
+                linkedAstralAbility.UpgradeAbility();
         }
     }
 
@@ -99,8 +104,7 @@ public class CardController : MonoBehaviour
 
     private IEnumerator WaitForAnimationToEnd()
     {
-        // Ждём завершения анимации "TriggerHide"
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        Destroy(gameObject); // Уничтожаем карту
+        Destroy(gameObject);
     }
 }
