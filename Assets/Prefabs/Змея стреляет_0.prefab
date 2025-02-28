@@ -169,9 +169,10 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 25
   coinAmount: 2
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
   keepDistance: 5
   shootingInterval: 4
-  bulletPrefab: {fileID: 2725270126247804960, guid: db921be66f846b04ab284e89cf1fcc9e, type: 3}
+  bulletPrefab: {fileID: 9163362348238275319, guid: 5b1b21b176bcd044786ab466a689aa6c, type: 3}
   firePoint: {fileID: 8404887082875340099}
   bulletSpeed: 5
 --- !u!50 &842327526826583302

@@ -32,6 +32,13 @@ public class MovementPlayer : MonoBehaviour
 
     private bool isLevelingUp = false; // Флаг, чтобы избежать повторного появления панели
 
+    public bool isInvincible = false; // Добавляем флаг неуязвимости
+
+
+
+
+    
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -121,6 +128,8 @@ public class MovementPlayer : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isInvincible) return; // Если игрок неуязвим, урон не проходит
+
         HP -= damage;
         CheckHealth();
     }
@@ -135,7 +144,8 @@ public class MovementPlayer : MonoBehaviour
 
     private void Die()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("Menu");
+        FindObjectOfType<CoinManager>().EndGameAndSaveCoins();
     }
 
     public void AddMoney(float value)

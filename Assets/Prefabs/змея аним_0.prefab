@@ -210,3 +210,4 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 35
   coinAmount: 1
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}

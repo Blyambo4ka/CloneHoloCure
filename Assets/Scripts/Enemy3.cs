@@ -11,6 +11,11 @@ public class Enemy3 : Enemy
     private Rigidbody2D rb;
 
 
+
+    public override void Initialize(Transform player, Spawner spawner, int hp, int experienceAmount, int coinAmount, int enemyIndex)
+    {
+        base.Initialize(player, spawner, hp, experienceAmount + 5, coinAmount + 2, enemyIndex);
+    }
     void Update()
     {
 
@@ -24,7 +29,6 @@ public class Enemy3 : Enemy
             {
                 Shoot(); // Выстрел
                 lastShootTime = Time.time;
-                Debug.Log("Trying to shoot!"); // Проверка
             }
         }
 
@@ -65,7 +69,7 @@ public class Enemy3 : Enemy
 
     if (bulletPrefab != null && firePoint != null)
     {
-        Debug.Log("Shooting!");
+       
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         Vector2 direction = (player.position - firePoint.position).normalized;
         Bullet bulletScript = bullet.GetComponent<Bullet>();
