@@ -15,17 +15,16 @@ public class Spawner : MonoBehaviour
     public Transform[] spawnPoints;
     public Transform player;
 
+    public bool isBossSpawner = false; // Флаг для спавнера, который будет спавнить Enemy4 (босс)
+    public bool isEnemy6Spawner = false; // Флаг для спавнера, который будет спавнить Enemy6 (второй босс)
+
     private float timeSinceStart = 0f;
     private float spawnInterval = 2f;
     private float timeSinceLastSpawn = 0f;
     private int enemyCounter = 0;
 
-    private float enemy2SpawnTime = 15f;
-    private float enemy3SpawnTime = 30f;
-    private float enemy4SpawnTime = 45f;
-    private float enemy5SpawnTime = 60f;
-    private float enemy6SpawnTime = 80f; // Время появления Enemy6
-    private float enemy7SpawnTime = 10f; // Время появления Enemy7
+    private float enemy4SpawnTime = 45f; // Время появления Enemy4 (босс)
+    private float enemy6SpawnTime = 80f; // Время появления Enemy6 (второй босс)
 
     private bool bossSpawned = false;  // Флаг для Enemy4
     private bool enemy6Spawned = false; // Флаг для Enemy6
@@ -35,18 +34,18 @@ public class Spawner : MonoBehaviour
         timeSinceStart += Time.deltaTime;
         timeSinceLastSpawn += Time.deltaTime;
 
-        // Спавн Enemy6 один раз на 80 секунде
-        if (!enemy6Spawned && timeSinceStart >= enemy6SpawnTime)
+        // Спавн босса (Enemy4) только если это спавнер для босса
+        if (!bossSpawned && isBossSpawner && timeSinceStart >= enemy4SpawnTime)
         {
-            SpawnEnemy6();
-            enemy6Spawned = true; // Enemy6 больше не спавнится
+            SpawnBoss("Enemy4");
+            bossSpawned = true; // Босс больше не спавнится
         }
 
-        // Спавн босса (Enemy4) один раз
-        if (!bossSpawned && timeSinceStart >= enemy4SpawnTime)
+        // Спавн второго босса (Enemy6) только если это спавнер для Enemy6
+        if (!enemy6Spawned && isEnemy6Spawner && timeSinceStart >= enemy6SpawnTime)
         {
-            SpawnBoss();
-            bossSpawned = true; // Босс больше не спавнится
+            SpawnBoss("Enemy6");
+            enemy6Spawned = true; // Enemy6 больше не спавнится
         }
         else if (timeSinceLastSpawn >= spawnInterval)
         {
@@ -59,10 +58,11 @@ public class Spawner : MonoBehaviour
     {
         List<string> availableEnemies = new List<string> { "Enemy" };
 
-        if (timeSinceStart >= enemy2SpawnTime) availableEnemies.Add("Enemy2");
-        if (timeSinceStart >= enemy3SpawnTime) availableEnemies.Add("Enemy3");
-        if (timeSinceStart >= enemy5SpawnTime) availableEnemies.Add("Enemy5");
-        if (timeSinceStart >= enemy7SpawnTime) availableEnemies.Add("Enemy7");
+        // Добавляем другие врагов в зависимости от времени
+        if (timeSinceStart >= 15f) availableEnemies.Add("Enemy2");
+        if (timeSinceStart >= 30f) availableEnemies.Add("Enemy3");
+        if (timeSinceStart >= 60f) availableEnemies.Add("Enemy5");
+        if (timeSinceStart >= 10f) availableEnemies.Add("Enemy7");
 
         if (availableEnemies.Count == 0) return;
 
@@ -71,14 +71,12 @@ public class Spawner : MonoBehaviour
         SpawnFromPool(selectedEnemyTag);
     }
 
-    private void SpawnBoss()
+    private void SpawnBoss(string enemyTag)
     {
-        SpawnFromPool("Enemy4"); // Спавним босса один раз
-    }
-
-    private void SpawnEnemy6()
-    {
-        SpawnFromPool("Enemy6"); // Спавним Enemy6 один раз
+        if ((enemyTag == "Enemy4" && isBossSpawner) || (enemyTag == "Enemy6" && isEnemy6Spawner))  // Проверка, что этот спавнер должен спавнить босса
+        {
+            SpawnFromPool(enemyTag); // Спавним босса
+        }
     }
 
     private void SpawnFromPool(string enemyTag)
@@ -92,7 +90,7 @@ public class Spawner : MonoBehaviour
 
             if (enemyScript != null)
             {
-                // Если спавним Enemy6 или Enemy7, даем им больше HP
+                // Инициализация врага
                 int hp = (enemyTag == "Enemy4" || enemyTag == "Enemy6") ? 40 : 10;
 
                 enemyScript.Initialize(player, this, hp, 20, 1, enemyCounter);

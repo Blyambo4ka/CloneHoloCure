@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -5542413064906448619}
   - component: {fileID: -2821190382032536436}
   - component: {fileID: 5134547213718055103}
+  - component: {fileID: 5875194748308300195}
   m_Layer: 0
   m_Name: "\u043B\u044F\u0433\u0443\u0448\u043A\u0430 \u043C\u0430\u0433_0"
   m_TagString: Enemy7
@@ -115,6 +116,8 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 20
   coinAmount: 1
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
+  dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
   damageZonePrefab: {fileID: 1355880165902623161, guid: c12a4f636f508fe47982b800a230d26d, type: 3}
   warningCirclePrefab: {fileID: 4163283602012415461, guid: 35058b33f3c535d499b58687e8623402, type: 3}
   zoneCooldown: 2
@@ -218,3 +221,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5875194748308300195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170555825563540585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6cd32427c8eed4b9aedafc31a8bbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMultiplier: 0.5
+  slowColor: {r: 1, g: 1, b: 0, a: 0.5}

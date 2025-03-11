@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class MovementPlayer : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class MovementPlayer : MonoBehaviour
     public float footstepInterval = 0.3f;
     private float lastFootstepTime;
     public float footstepDuration = 0.2f;
+    public float maxHealth = 200;
     public float experience = 0f; // Текущий опыт
     public float experienceToNextLevel = 300f; // Опыт для следующего уровня
     public Image experienceBar;
@@ -33,12 +35,14 @@ public class MovementPlayer : MonoBehaviour
     private bool isLevelingUp = false; // Флаг, чтобы избежать повторного появления панели
 
     public bool isInvincible = false; // Добавляем флаг неуязвимости
+    public float maxShield = 100f; // Максимальный щит
+    public float shield = 0f; // Текущий щит
+    public float shieldRegenRate = 5f; // Скорость восстановления щита в секунду
+    public float shieldRegenDelay = 4f; // Задержка перед восстановлением щита (в секундах)
+    private float timeSinceLastDamage = 0f; // Время с момента последнего получения урона
+    public bool isShieldActive = false; // Флаг для проверки, активен ли щит
 
-
-
-
-    
-
+   
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -56,6 +60,17 @@ public class MovementPlayer : MonoBehaviour
             UpdateMoneyText();
             UpdateExperienceBar();
         }
+        if (isShieldActive && shield < maxShield && timeSinceLastDamage >= shieldRegenDelay)
+        {
+            shield += shieldRegenRate * Time.deltaTime;
+            if (shield > maxShield)
+            {
+                shield = maxShield;
+            }
+        }
+
+        // Обновляем таймер
+        timeSinceLastDamage += Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -84,6 +99,19 @@ public class MovementPlayer : MonoBehaviour
         {
             TryCreateFootstepEffect();
         }
+    }
+
+    public void Heal(float amount)
+    {
+        if (HP >= maxHealth) // Если здоровье уже максимальное, лечение не требуется
+        {
+            
+            return;
+        }
+
+        HP += amount; // Увеличиваем здоровье
+        HP = Mathf.Clamp(HP, 0, maxHealth); // Ограничиваем здоровье максимальным значением
+        
     }
 
     private void ApplyMovement()
@@ -126,13 +154,50 @@ public class MovementPlayer : MonoBehaviour
         attackDamage += amount;
     }
 
+    public void AddShield(float amount)
+    {
+        if (!isShieldActive)
+        {
+            isShieldActive = true; // Активируем щит
+        }
+
+        shield += amount;
+
+        if (shield > maxShield)
+        {
+            shield = maxShield;
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         if (isInvincible) return; // Если игрок неуязвим, урон не проходит
 
-        HP -= damage;
+        // Сбрасываем таймер при получении урона
+        timeSinceLastDamage = 0f;
+
+        // Сначала урон поглощается щитом
+        if (isShieldActive && shield > 0)
+        {
+            shield -= damage;
+            if (shield < 0)
+            {
+                // Если щит закончился, остаток урона переходит на здоровье
+                HP += shield; // shield отрицательный, поэтому +=
+                shield = 0;
+            }
+        }
+        else
+        {
+            // Если щита нет, урон наносится здоровью
+            HP -= damage;
+        }
+
         CheckHealth();
     }
+
+
+   
 
     private void CheckHealth()
     {
@@ -193,10 +258,10 @@ public class MovementPlayer : MonoBehaviour
         // Увеличиваем уровень
         level++;
         experience -= experienceToNextLevel;
-        experienceToNextLevel *= 1.5f;
+        experienceToNextLevel *= 1.05f;
 
-        // Увеличиваем здоровье и урон
-        HP += healthIncreasePerLevel;
+        // Увеличиваем здоровье
+        HP = Mathf.Min(HP + healthIncreasePerLevel, maxHealth);
 
         // Показываем панель повышения уровня
         uiManager.ShowLevelUpPanel();

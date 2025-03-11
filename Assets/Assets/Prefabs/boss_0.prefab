@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5748351592383304950}
   - component: {fileID: 3364076085297303656}
   - component: {fileID: 4848930114133625284}
+  - component: {fileID: -2923621366322982274}
   m_Layer: 0
   m_Name: boss_0
   m_TagString: Enemy4
@@ -137,8 +138,9 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 150
   coinAmount: 1
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
+  dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
   projectilePrefab: {fileID: 9163362348238275319, guid: 5b1b21b176bcd044786ab466a689aa6c, type: 3}
-  chestPrefab: {fileID: 421115356913672389, guid: eb2e0c47ab3f34c4ca706c428afd7f7f, type: 3}
   shootCooldown: 6
   projectileCount: 10
   projectileSpeed: 5
@@ -215,3 +217,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-2923621366322982274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738319564430913620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6cd32427c8eed4b9aedafc31a8bbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMultiplier: 0.5
+  slowColor: {r: 1, g: 1, b: 0, a: 0.5}

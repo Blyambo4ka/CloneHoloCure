@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 8829694324052975872}
   - component: {fileID: 6215248923917449063}
   - component: {fileID: 6702255664534496581}
+  - component: {fileID: 974805986505320027}
   m_Layer: 4
   m_Name: "\u043B\u044F\u0433\u0443\u0448 \u0448\u0430\u0440\u0430\u0433\u0430 \u0430\u043D\u0438\u043C_0
     1"
@@ -241,7 +242,21 @@ MonoBehaviour:
   damageReceiveInterval: 0.4
   deathEffectPrefab: {fileID: 1608719769984690688, guid: c65ef2efe2266d6418b990431e52c47a, type: 3}
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
-  experienceAmount: 10
+  experienceAmount: 11
   coinAmount: 1
   damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
-  textSpawnPoint: {fileID: 1047856267590032839}
+  dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
+--- !u!114 &974805986505320027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3300824518223009380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6cd32427c8eed4b9aedafc31a8bbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMultiplier: 0.5
+  slowColor: {r: 1, g: 1, b: 0, a: 0.5}

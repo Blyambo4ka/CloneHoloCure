@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 5134059218488228496}
   - component: {fileID: 842327526826583302}
   - component: {fileID: 338675523405665892}
+  - component: {fileID: 1430642929535041547}
   m_Layer: 0
   m_Name: "\u0417\u043C\u0435\u044F \u0441\u0442\u0440\u0435\u043B\u044F\u0435\u0442_0"
   m_TagString: Enemy3
@@ -169,6 +170,8 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 25
   coinAmount: 2
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
+  dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
   keepDistance: 5
   shootingInterval: 4
   bulletPrefab: {fileID: 9163362348238275319, guid: 5b1b21b176bcd044786ab466a689aa6c, type: 3}
@@ -247,3 +250,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.461627, y: 0.625}
   m_EdgeRadius: 0
+--- !u!114 &1430642929535041547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8946817009577519722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6cd32427c8eed4b9aedafc31a8bbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMultiplier: 0.5
+  slowColor: {r: 1, g: 1, b: 0, a: 0.5}

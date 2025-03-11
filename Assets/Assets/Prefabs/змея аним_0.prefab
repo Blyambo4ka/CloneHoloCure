@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7790801596499516809}
   - component: {fileID: 5010111433807193219}
   - component: {fileID: 8084420261309629596}
+  - component: {fileID: -5941898736902593022}
   m_Layer: 4
   m_Name: "\u0437\u043C\u0435\u044F \u0430\u043D\u0438\u043C_0"
   m_TagString: Enemy2
@@ -210,3 +211,19 @@ MonoBehaviour:
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
   experienceAmount: 35
   coinAmount: 1
+  damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
+  dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
+--- !u!114 &-5941898736902593022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8970589940555591823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6cd32427c8eed4b9aedafc31a8bbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowMultiplier: 0.5
+  slowColor: {r: 1, g: 1, b: 0, a: 0.5}

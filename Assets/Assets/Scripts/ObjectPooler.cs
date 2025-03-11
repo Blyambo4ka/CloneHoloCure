@@ -21,17 +21,18 @@ public class ObjectPooler : MonoBehaviour
     {
         if (poolDictionary.ContainsKey(tag))
         {
-            var pool = poolDictionary[tag];
-            var count = pool.Count;
-
-            // Удаляем все объекты в этом пуле
-            for (int i = 0; i < count; i++)
+            Queue<GameObject> pool = poolDictionary[tag];
+            
+            while (pool.Count > 0)
             {
-                var obj = pool.Dequeue();
-                Destroy(obj); // Полное уничтожение
+                GameObject obj = pool.Dequeue();
+                Destroy(obj);
             }
+
+            poolDictionary[tag] = new Queue<GameObject>(); // Пересоздаем очередь
         }
     }
+
 
     private void Awake()
     {
@@ -53,42 +54,69 @@ public class ObjectPooler : MonoBehaviour
          }
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
+   public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
-            Debug.LogWarning("Pool with tag " + tag + " doesn`t exist.");
+            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
             return null;
         }
 
-        GameObject obj = poolDictionary[tag].Dequeue();
+        GameObject obj;
+        
+        if (poolDictionary[tag].Count == 0)
+        {
+            // Если в пуле нет объектов, создаем новый
+            Pool pool = pools.Find(p => p.tag == tag);
+            if (pool != null)
+            {
+                obj = Instantiate(pool.prefab);
+            }
+            else
+            {
+                Debug.LogWarning("No prefab found for tag " + tag);
+                return null;
+            }
+        }
+        else
+        {
+            obj = poolDictionary[tag].Dequeue();
+        }
 
         obj.SetActive(true);
         obj.transform.position = position;
         obj.transform.rotation = rotation;
 
-
-        poolDictionary[tag].Enqueue(obj);
-       
         return obj;
     }
 
-    public void ReturnToPool(string tag, GameObject objectToReturn)
+    
+
+
+
+   public void ReturnToPool(string tag, GameObject objectToReturn)
     {
-       if (!poolDictionary.ContainsKey(tag))
-       {
-           Debug.LogWarning("Pool with tag " + tag + " doesn`t exist.");
-           return;
-       }
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning("Pool with tag " + tag + " doesn`t exist.");
+            return;
+        }
 
-       // Сбросить состояние объекта перед его возвратом в пул
-       Experience experienceScript = objectToReturn.GetComponent<Experience>();
-       if (experienceScript != null)
-       {
-           experienceScript.ResetExperience();  // Сбросим все значения опыта
-       }
+        if (objectToReturn == null)
+        {
+            Debug.LogWarning("Trying to return a null object to the pool.");
+            return;
+        }
 
-       objectToReturn.SetActive(false);
-       poolDictionary[tag].Enqueue(objectToReturn);
+        // Сброс состояния объекта перед возвратом в пул
+        Experience experienceScript = objectToReturn.GetComponent<Experience>();
+        if (experienceScript != null)
+        {
+            experienceScript.ResetExperience();
+        }
+
+        objectToReturn.SetActive(false);
+        poolDictionary[tag].Enqueue(objectToReturn);
     }
+
 }
