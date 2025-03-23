@@ -20,30 +20,57 @@ public class ItemInventoryManager : MonoBehaviour
     }
 
     // Добавление предмета в инвентарь
-    public void AddItem(string itemName, Sprite itemIcon, string description)
+    public bool AddItem(string itemName, Sprite itemIcon, string description)
     {
         if (itemInventory.ContainsKey(itemName))
         {
             Debug.LogWarning($"Предмет {itemName} уже есть в инвентаре!");
-            return;
+            return false;
+        }
+
+        if (ItemInventoryUIManager.Instance.IsInventoryFull())
+        {
+            Debug.LogWarning($"Инвентарь переполнен! {itemName} не может быть добавлен.");
+            return false;
         }
 
         InventoryObject newItem = new InventoryObject(itemName, itemIcon, description);
         itemInventory.Add(itemName, newItem);
 
         // Отображаем предмет в UI
-        ItemInventoryUIManager.Instance.AddItemToUI(newItem);
-
-        Debug.Log($"Добавлен предмет {itemName}: {description}");
+        if (ItemInventoryUIManager.Instance.AddItemToUI(newItem))
+        {
+            Debug.Log($"Добавлен предмет {itemName}: {description}");
+            return true;
+        }
+        else
+        {
+            itemInventory.Remove(itemName); // Удаляем из списка, если не добавили в UI
+            return false;
+        }
     }
 
-    // Показать содержимое предметного инвентаря (для отладки)
-    public void ShowItemInventory()
+    // Удаление предмета из инвентаря
+    public void RemoveItem(string itemName)
     {
-        Debug.Log("=== Инвентарь предметов ===");
-        foreach (var item in itemInventory)
+        if (!itemInventory.ContainsKey(itemName))
         {
-            Debug.Log($"Предмет: {item.Value.Name}, Описание: {item.Value.Description}");
+            Debug.LogWarning($"Предмет {itemName} не найден в инвентаре!");
+            return;
         }
+
+        // Удаляем предмет из инвентаря
+        itemInventory.Remove(itemName);
+
+        // Удаляем предмет из UI
+        ItemInventoryUIManager.Instance.RemoveItemFromUI(itemName);
+
+        Debug.Log($"Предмет {itemName} удалён из инвентаря.");
+    }
+
+    // Проверка наличия предмета в инвентаре
+    public bool HasItem(string itemName)
+    {
+        return itemInventory.ContainsKey(itemName);
     }
 }

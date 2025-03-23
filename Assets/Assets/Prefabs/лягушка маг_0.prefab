@@ -114,8 +114,8 @@ MonoBehaviour:
   damageReceiveInterval: 0.3
   deathEffectPrefab: {fileID: 1608719769984690688, guid: c65ef2efe2266d6418b990431e52c47a, type: 3}
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
-  experienceAmount: 20
-  coinAmount: 1
+  experienceAmount: 25
+  coinAmount: 5
   damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
   dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
   damageZonePrefab: {fileID: 1355880165902623161, guid: c12a4f636f508fe47982b800a230d26d, type: 3}

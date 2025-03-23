@@ -38,7 +38,7 @@ public class HealtPlayer : MonoBehaviour
         // Обновляем текстовое отображение здоровья
         if (healthText != null)
         {
-            healthText.text = $"{Mathf.Ceil(player.HP)} / {Mathf.Ceil(maxHealth)}"; // Текущее здоровье / Максимальное здоровье
+            healthText.text = $"{Mathf.Ceil(player.HP)} ! {Mathf.Ceil(maxHealth)}"; // Текущее здоровье / Максимальное здоровье
 
             // Если не идёт временное зеленение текста (исцеление), обновляем цвет в зависимости от здоровья
             if (!isHealing)

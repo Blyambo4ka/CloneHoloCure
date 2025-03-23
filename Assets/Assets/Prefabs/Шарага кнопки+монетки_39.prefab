@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   experienceValue: 2
-  moveSpeed: 1
+  moveSpeed: 5
   delayBeforeReturn: 0.1
   startMoveDelay: 0.4
   startMoveRadius: 3

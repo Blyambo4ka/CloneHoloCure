@@ -42,7 +42,10 @@ public class Projectile : MonoBehaviour
         if (collision.CompareTag("Enemy") || collision.CompareTag("Enemy2") ||
             collision.CompareTag("Enemy3") || collision.CompareTag("Enemy4") ||
             collision.CompareTag("Enemy5") || collision.CompareTag("Enemy6") ||
-            collision.CompareTag("Enemy7"))
+            collision.CompareTag("Enemy7") ||
+            collision.CompareTag("Enemy8")||
+            collision.CompareTag("Enemy9") ||
+            collision.CompareTag("Enemy10"))
         {
             // Получаем компонент Enemy
             Enemy enemy = collision.GetComponent<Enemy>();

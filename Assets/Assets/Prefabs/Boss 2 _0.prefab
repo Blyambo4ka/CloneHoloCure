@@ -111,11 +111,11 @@ MonoBehaviour:
   firstAttackDelay: 1.5
   damageCooldown: 1
   coinPrefab: {fileID: 2026770506716384940, guid: 3636440207221a7469acb436fe373c31, type: 3}
-  damageReceiveInterval: 0.3
+  damageReceiveInterval: 0
   deathEffectPrefab: {fileID: 1608719769984690688, guid: c65ef2efe2266d6418b990431e52c47a, type: 3}
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
-  experienceAmount: 20
-  coinAmount: 1
+  experienceAmount: 300
+  coinAmount: 150
   damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
   dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
   projectilePrefab: {fileID: 9163362348238275319, guid: 5b1b21b176bcd044786ab466a689aa6c, type: 3}
@@ -129,6 +129,39 @@ MonoBehaviour:
   zoneDuration: 5
   zoneDamage: 4
   zoneSpawnRadius: 3
+  lootTable:
+  - itemName: Shield
+    itemPrefab: {fileID: 7427128204147557765, guid: b0afa14fc531eda41bd16d3cc703e8dc, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Exp
+    itemPrefab: {fileID: 9052234687691635573, guid: 67a28284f2ff1da4290823bc878255c8, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Mage
+    itemPrefab: {fileID: 1384238021598262131, guid: e55c7e3597f080145851527d2b6df567, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Slow
+    itemPrefab: {fileID: 2818946609708272281, guid: 7f5f8c48a1232ed4cae85291b7281c1f, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Pero
+    itemPrefab: {fileID: 8900007660034331899, guid: 66ba373d9e7e3fa4dac6aa5d23abc506, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Damage+++
+    itemPrefab: {fileID: 8704875336473006553, guid: 675c5f120aa84f64796e6b6df1985027, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Bunny
+    itemPrefab: {fileID: 3996265783093428295, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
+    rarity: 0.5
+    value: 0
+  - itemName: Syringe
+    itemPrefab: {fileID: 9092844362397487738, guid: dccc04166182e764d84b6fc8a95e3364, type: 3}
+    rarity: 0.5
+    value: 0
 --- !u!95 &7157686684035900060
 Animator:
   serializedVersion: 7

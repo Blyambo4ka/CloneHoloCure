@@ -6,7 +6,7 @@ public class DashAbility : MonoBehaviour
     public GameObject fireTrailPrefab;
     public GameObject fireTrailMaxLevelPrefab;
     public Transform feetstep;
-    public float fireDuration = 2f;
+    public float fireDuration = 1.5f;
     private int fireDamage = 10;
     private int upgradeLevel = 0;
     private const int maxUpgradeLevel = 5;
@@ -38,7 +38,7 @@ public class DashAbility : MonoBehaviour
         if (!isUnlocked || upgradeLevel >= maxUpgradeLevel) return;
 
         upgradeLevel++;
-        fireDamage += 1;
+        fireDamage += 5;
         dashSpeed += 2f;
 
         // Обновляем уровень способности в инвентаре

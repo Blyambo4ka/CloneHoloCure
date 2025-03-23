@@ -6,11 +6,27 @@ public class SpeedBoostItem : MonoBehaviour
     public float attackRateMultiplier = 1.2f; // Увеличение скорости атаки на 20% (1.2 = 120%)
     public int damagePerSecond = 2; // Урон игроку каждую секунду
 
+    public Sprite itemIcon; // Иконка предмета
+    public string itemName = "Speed Boost"; // Название предмета
+    public string itemDescription = "Увеличивает скорость и скорость атаки, но наносит 2 урона в секунду."; // Описание предмета
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        
+        
         if (collision.CompareTag("Player"))
         {
+             if (ItemInventoryUIManager.Instance.IsInventoryFull())
+        {
+            Debug.LogWarning("Инвентарь заполнен! Нельзя подобрать предмет.");
+            return; // Предмет не активируется и остаётся на сцене
+        }
             MovementPlayer player = collision.GetComponent<MovementPlayer>();
+            if (ItemInventoryUIManager.Instance.IsInventoryFull())
+            {
+                Debug.LogWarning("Инвентарь заполнен! Нельзя подобрать предмет.");
+                return; // Предмет не активируется и остаётся на сцене
+            }
             if (player != null)
             {
                 // Увеличиваем скорость движения
@@ -23,6 +39,10 @@ public class SpeedBoostItem : MonoBehaviour
                 player.StartCoroutine(ApplyPeriodicDamage(player));
 
                 Debug.Log("Speed Boost applied! Speed and attack rate increased.");
+
+                // Добавляем предмет в инвентарь
+                ItemInventoryManager.Instance.AddItem(itemName, itemIcon, itemDescription);
+
                 Destroy(gameObject); // Уничтожаем предмет после подбора
             }
         }

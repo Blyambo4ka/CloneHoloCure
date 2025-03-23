@@ -202,15 +202,15 @@ MonoBehaviour:
   speed: 2
   damage: 10
   player: {fileID: 0}
-  HP: 20
+  HP: 27
   firstAttackDelay: 1.5
   damageCooldown: 1
   coinPrefab: {fileID: 2026770506716384940, guid: 3636440207221a7469acb436fe373c31, type: 3}
   damageReceiveInterval: 0.3
   deathEffectPrefab: {fileID: 1608719769984690688, guid: c65ef2efe2266d6418b990431e52c47a, type: 3}
   experiencePrefab: {fileID: 5611321769007751418, guid: e5cb5b67f5d08874e9d2914d44c934bb, type: 3}
-  experienceAmount: 35
-  coinAmount: 1
+  experienceAmount: 20
+  coinAmount: 5
   damageTextPrefab: {fileID: 6897016515057133, guid: 46eeabde416baa844b0acc15ff610792, type: 3}
   dropOnKill: {fileID: 6150172459657522054, guid: 24286860587475e4c892a1dfe85af0d9, type: 3}
 --- !u!114 &-5941898736902593022

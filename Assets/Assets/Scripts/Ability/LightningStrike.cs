@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-
 public class LightningStrike : MonoBehaviour
 {
     public GameObject lightningEffect; // Обычная молния (синяя)
@@ -28,8 +27,6 @@ public class LightningStrike : MonoBehaviour
             StopAllCoroutines(); 
         }
     }
-
-
 
     public void UnlockAbility() 
     {
@@ -73,30 +70,44 @@ public class LightningStrike : MonoBehaviour
 
             if (enemies.Length > 0)
             {
-                Enemy target = enemies[Random.Range(0, enemies.Length)];
+                int numberOfStrikes = 1; // По умолчанию 1 молния
 
-                // Выбираем молнию в зависимости от уровня
-                GameObject lightningPrefab = (upgradeLevel >= maxUpgradeLevel) ? lightningEffectMaxLevel : lightningEffect;
+                if (upgradeLevel >= 3)
+                {
+                    numberOfStrikes = 2; // На 3 уровне 2 молнии
+                }
 
-                // Спавним молнию
-                GameObject lightning = Instantiate(lightningPrefab, target.transform.position, Quaternion.identity);
+                if (upgradeLevel >= maxUpgradeLevel)
+                {
+                    numberOfStrikes = 3; // На 5 уровне 3 молнии
+                }
 
-                // Удаляем молнию после анимации
-                float animationLength = lightning.GetComponent<Animator>()?.GetCurrentAnimatorStateInfo(0).length ?? 1f;
-                Destroy(lightning, animationLength);
+                for (int i = 0; i < numberOfStrikes; i++)
+                {
+                    Enemy target = enemies[Random.Range(0, enemies.Length)];
 
-                // Наносим урон
-                target.TakeDamage(currentDamage);
-                Debug.Log($"LightningStrike hit enemy with {currentDamage} damage!");
+                    // Выбираем молнию в зависимости от уровня
+                    GameObject lightningPrefab = (upgradeLevel >= maxUpgradeLevel) ? lightningEffectMaxLevel : lightningEffect;
+
+                    // Спавним молнию
+                    GameObject lightning = Instantiate(lightningPrefab, target.transform.position, Quaternion.identity);
+
+                    // Удаляем молнию после анимации
+                    float animationLength = lightning.GetComponent<Animator>()?.GetCurrentAnimatorStateInfo(0).length ?? 1f;
+                    Destroy(lightning, animationLength);
+
+                    // Наносим урон
+                    target.TakeDamage(currentDamage);
+                    Debug.Log($"LightningStrike hit enemy with {currentDamage} damage!");
+                }
             }
         }
     }
 
     public void IncreaseDamage(float multiplier)
-   {
-       baseDamage = Mathf.RoundToInt(baseDamage * multiplier); // Увеличиваем базовый урон
-       currentDamage = Mathf.RoundToInt(currentDamage * multiplier); // Увеличиваем текущий урон
-       Debug.Log($"Урон LightningStrike увеличен! Текущий урон: {currentDamage}");
-   }
-
+    {
+        baseDamage = Mathf.RoundToInt(baseDamage * multiplier); // Увеличиваем базовый урон
+        currentDamage = Mathf.RoundToInt(currentDamage * multiplier); // Увеличиваем текущий урон
+        Debug.Log($"Урон LightningStrike увеличен! Текущий урон: {currentDamage}");
+    }
 }

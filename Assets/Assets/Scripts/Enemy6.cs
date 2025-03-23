@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Enemy6 : Enemy
 {
@@ -15,9 +16,14 @@ public class Enemy6 : Enemy
     public int zoneDamage = 4; // Урон от зоны
     public float zoneSpawnRadius = 3f; // Радиус появления зоны урона
 
+    // Список предметов (типа Item1) для выпадения
+    public List<Item1> lootTable;
+
+    private GameObject currentWarningCircle; // Текущий предупреждающий круг
+
     public override void Initialize(Transform player, Spawner spawner, int hp, int experienceAmount, int coinAmount, int enemyIndex)
     {
-        base.Initialize(player, spawner, hp * 15, experienceAmount + 100, coinAmount + 25, enemyIndex);
+        base.Initialize(player, spawner, hp * 55, experienceAmount + 100, coinAmount + 25, enemyIndex);
         StartCoroutine(ShootRoutine());
         StartCoroutine(ZoneRoutine());
     }
@@ -36,14 +42,14 @@ public class Enemy6 : Enemy
         while (HP > 0) // Пока босс жив, он создает зоны урона
         {
             yield return new WaitForSeconds(zoneCooldown);
-            StartCoroutine(ShowWarningAndCreateZone());
+            yield return StartCoroutine(ShowWarningAndCreateZone());
         }
     }
 
     private IEnumerator ShowWarningAndCreateZone()
     {
         // Используем player из родительского класса Enemy
-        if (player == null)
+        if (player == null || HP <= 0)
         {
             yield break;
         }
@@ -52,13 +58,14 @@ public class Enemy6 : Enemy
         Vector2 spawnPosition = (Vector2)player.position + Random.insideUnitCircle.normalized * zoneSpawnRadius;
 
         // Показываем предупреждающий круг
-        GameObject warningCircle = Instantiate(warningCirclePrefab, spawnPosition, Quaternion.identity);
+        DestroyWarningCircle(); // Удаляем старый круг перед созданием нового
+        currentWarningCircle = Instantiate(warningCirclePrefab, spawnPosition, Quaternion.identity);
 
         // Ждем перед созданием зоны урона
         yield return new WaitForSeconds(warningDuration);
 
         // Удаляем предупреждающий круг
-        Destroy(warningCircle);
+        DestroyWarningCircle();
 
         // Создаем зону урона
         GameObject zone = Instantiate(damageZonePrefab, spawnPosition, Quaternion.identity);
@@ -66,6 +73,15 @@ public class Enemy6 : Enemy
         if (damageZone != null)
         {
             damageZone.Initialize(zoneDamage, zoneDuration);
+        }
+    }
+
+    private void DestroyWarningCircle()
+    {
+        if (currentWarningCircle != null)
+        {
+            Destroy(currentWarningCircle);
+            currentWarningCircle = null;
         }
     }
 
@@ -91,5 +107,68 @@ public class Enemy6 : Enemy
                 rb.linearVelocity = direction * projectileSpeed;
             }
         }
+    }
+
+    public override void TakeDamage(int damage)
+    {
+        base.TakeDamage(damage);
+        if (HP <= 0) // Если босс умер
+        {
+            
+            DropLoot();
+        }
+    }
+
+    private void DropLoot()
+    {
+        if (lootTable != null && lootTable.Count > 0)
+        {
+            Item1 selectedItem = GetRandomItem(); // Получение случайного предмета с учетом редкости
+            if (selectedItem != null && selectedItem.itemPrefab != null)
+            {
+                Instantiate(selectedItem.itemPrefab, transform.position, Quaternion.identity); // Создание предмета на месте смерти босса
+            }
+        }
+    }
+
+    
+
+    private Item1 GetRandomItem()
+    {
+        float totalWeight = 0f;
+
+        // Считаем общий вес всех предметов
+        foreach (Item1 item in lootTable)
+        {
+            totalWeight += item.rarity;
+        }
+
+        // Генерируем случайное число от 0 до totalWeight
+        float randomValue = Random.Range(0, totalWeight);
+
+        float cumulativeWeight = 0f;
+        foreach (Item1 item in lootTable)
+        {
+            cumulativeWeight += item.rarity;
+            if (randomValue <= cumulativeWeight)
+            {
+                return item; // Возвращаем предмет, который соответствует случайному числу
+            }
+        }
+
+        return null; // Если ничего не найдено (редкий случай)
+    }
+
+    // ГАРАНТИРОВАННОЕ УДАЛЕНИЕ КРУГА ПРИ СМЕРТИ
+    public override void KillEnemy()
+    {
+        DestroyWarningCircle(); // Удаляем предупреждающий круг
+        base.KillEnemy(); // Вызываем стандартное уничтожение врага
+    }
+
+    // ГАРАНТИРОВАННОЕ УДАЛЕНИЕ КРУГА ПРИ УДАЛЕНИИ ОБЪЕКТА
+    private void OnDestroy()
+    {
+        DestroyWarningCircle();
     }
 }

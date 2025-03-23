@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class MovementPlayer : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class MovementPlayer : MonoBehaviour
     public float experience = 0f; // Текущий опыт
     public float experienceToNextLevel = 300f; // Опыт для следующего уровня
     public Image experienceBar;
+    public TextMeshProUGUI levelText; // Ссылка на текстовый элемент уровня
     public UIManager uiManager;
     public int attackDamage = 10;
     
@@ -42,12 +44,23 @@ public class MovementPlayer : MonoBehaviour
     private float timeSinceLastDamage = 0f; // Время с момента последнего получения урона
     public bool isShieldActive = false; // Флаг для проверки, активен ли щит
 
+
+ 
+    public float attackRange = 1.5f; // Зона атаки
+    public bool doubleStrike = false; // Флаг двойного удара
+
+    public float attackPrefabScale = 1f; // Масштаб префаба атаки
+    public float attackAnimationSpeed = 1f; // Скорость анимации атаки
+
+    
+
    
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         lastFootstepTime = -footstepInterval;
+        UpdateLevelText();
     }
 
     void Update()
@@ -59,6 +72,7 @@ public class MovementPlayer : MonoBehaviour
             CheckHealth();
             UpdateMoneyText();
             UpdateExperienceBar();
+
         }
         if (isShieldActive && shield < maxShield && timeSinceLastDamage >= shieldRegenDelay)
         {
@@ -131,20 +145,48 @@ public class MovementPlayer : MonoBehaviour
     }
 
     private void Attack()
+{
+    Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    mousePosition.z = 0f;
+
+    Vector2 attackDirection = (mousePosition - transform.position).normalized;
+    Vector3 attackPosition = transform.position + (Vector3)attackDirection * attackDistance;
+    float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
+
+    GameObject attack = Instantiate(attackPrefab, attackPosition, Quaternion.Euler(0, 0, angle));
+    attack.transform.Rotate(0, 0, -90);
+
+    // Применяем масштаб префаба атаки
+    attack.transform.localScale = new Vector3(Mathf.Sign(attackDirection.x) * attackPrefabScale, attackPrefabScale, 1);
+
+    AttackHit attackHit = attack.GetComponent<AttackHit>();
+    attackHit.attackDirection = Mathf.Sign(attackDirection.x);
+
+    Destroy(attack, 0.4f);
+
+    // Устанавливаем скорость анимации атаки
+    animator.SetFloat("AttackSpeed", attackAnimationSpeed);
+
+    // Если активен двойной удар, вызываем вторую атаку с задержкой
+    if (doubleStrike)
     {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0f;
+        StartCoroutine(DoubleAttack(attackDirection, angle));
+    }
+}
 
-        Vector2 attackDirection = (mousePosition - transform.position).normalized;
+    private IEnumerator DoubleAttack(Vector2 attackDirection, float angle)
+    {
+        yield return new WaitForSeconds(0.3f); // Задержка между ударами
+
         Vector3 attackPosition = transform.position + (Vector3)attackDirection * attackDistance;
-        float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
-
         GameObject attack = Instantiate(attackPrefab, attackPosition, Quaternion.Euler(0, 0, angle));
         attack.transform.Rotate(0, 0, -90);
 
+        // Применяем масштаб префаба атаки
+        attack.transform.localScale = new Vector3(Mathf.Sign(attackDirection.x) * attackPrefabScale, attackPrefabScale, 1);
+
         AttackHit attackHit = attack.GetComponent<AttackHit>();
         attackHit.attackDirection = Mathf.Sign(attackDirection.x);
-        attack.transform.localScale = new Vector3(Mathf.Sign(attackDirection.x), 1, 1);
 
         Destroy(attack, 0.4f);
     }
@@ -263,10 +305,21 @@ public class MovementPlayer : MonoBehaviour
         // Увеличиваем здоровье
         HP = Mathf.Min(HP + healthIncreasePerLevel, maxHealth);
 
+        // Обновляем текст уровня
+        UpdateLevelText();
+
         // Показываем панель повышения уровня
         uiManager.ShowLevelUpPanel();
 
         Debug.Log("Level Up! Current level: " + level);
+    }
+
+    private void UpdateLevelText()
+    {
+        if (levelText != null)
+        {
+            levelText.text = "Lv. " + level;
+        }
     }
 
     public void ResumeGame() // Этот метод вызывается для возобновления игры

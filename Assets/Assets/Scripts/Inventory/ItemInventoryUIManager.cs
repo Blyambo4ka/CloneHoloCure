@@ -9,6 +9,7 @@ public class ItemInventoryUIManager : MonoBehaviour
 
     public GameObject itemPanel; // Панель, содержащая слоты для предметов
     public GameObject itemPrefab; // Префаб предмета (иконка + текст)
+    public int maxSlots = 4; // Максимальное количество слотов
 
     private Dictionary<string, GameObject> itemUIElements = new Dictionary<string, GameObject>();
 
@@ -24,13 +25,42 @@ public class ItemInventoryUIManager : MonoBehaviour
         }
     }
 
-    // Добавление предмета в UI
-    public void AddItemToUI(InventoryObject item)
+    // Проверка, есть ли свободные слоты
+    public bool HasFreeSlot()
     {
+        return GetUsedSlotsCount() < maxSlots;
+    }
+
+    // Проверка, заполнен ли инвентарь
+    public bool IsInventoryFull()
+    {
+        return GetUsedSlotsCount() >= maxSlots;
+    }
+
+    // Получаем количество занятых слотов
+    private int GetUsedSlotsCount()
+    {
+        int count = 0;
+        foreach (Transform slot in itemPanel.transform)
+        {
+            if (slot.childCount > 0) count++;
+        }
+        return count;
+    }
+
+    // Добавление предмета в UI
+    public bool AddItemToUI(InventoryObject item)
+    {
+        if (IsInventoryFull())
+        {
+            Debug.LogWarning($"Инвентарь полон! Нельзя добавить {item.Name}");
+            return false;
+        }
+
         if (itemUIElements.ContainsKey(item.Name))
         {
             Debug.LogWarning($"Предмет {item.Name} уже отображается в UI!");
-            return;
+            return false;
         }
 
         // Ищем первый свободный слот
@@ -38,7 +68,7 @@ public class ItemInventoryUIManager : MonoBehaviour
         if (freeSlot == null)
         {
             Debug.LogError("Нет свободных слотов для предмета!");
-            return;
+            return false;
         }
 
         // Создаём новый элемент UI для предмета
@@ -60,6 +90,21 @@ public class ItemInventoryUIManager : MonoBehaviour
 
         // Сохраняем элемент в словаре
         itemUIElements.Add(item.Name, newItemUI);
+        return true;
+    }
+
+    // Удаление предмета из UI
+    public void RemoveItemFromUI(string itemName)
+    {
+        if (!itemUIElements.ContainsKey(itemName))
+        {
+            Debug.LogError($"Предмет {itemName} не найден в UI!");
+            return;
+        }
+
+        GameObject itemUI = itemUIElements[itemName];
+        Destroy(itemUI);
+        itemUIElements.Remove(itemName);
     }
 
     // Найти первый свободный слот в панели предметов
@@ -73,19 +118,5 @@ public class ItemInventoryUIManager : MonoBehaviour
             }
         }
         return null;
-    }
-
-    // Удалить предмет из UI
-    public void RemoveItemFromUI(string itemName)
-    {
-        if (!itemUIElements.ContainsKey(itemName))
-        {
-            Debug.LogError($"Предмет {itemName} не найден в UI!");
-            return;
-        }
-
-        GameObject itemUI = itemUIElements[itemName];
-        Destroy(itemUI);
-        itemUIElements.Remove(itemName);
     }
 }

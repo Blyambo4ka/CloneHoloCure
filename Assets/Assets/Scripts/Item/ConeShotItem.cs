@@ -8,45 +8,43 @@ public class ConeShotItem : MonoBehaviour
     public int numberOfProjectiles = 3; // Количество объектов
     public float shootInterval = 4f; // Интервал между выстрелами (в секундах)
 
+    public Sprite itemIcon; // Иконка предмета
+    public string itemName = "Cone Shot"; // Название предмета
+    public string itemDescription = "Стреляет конусом из нескольких снарядов."; // Описание предмета
+
     private Transform playerTransform; // Трансформ игрока
     private bool isActive = false; // Флаг активности предмета
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
-
         if (collision.CompareTag("Player") && !isActive)
         {
-            
-
+            if (ItemInventoryUIManager.Instance.IsInventoryFull())
+            {
+                Debug.LogWarning("Инвентарь заполнен! Нельзя подобрать предмет.");
+                return; // Предмет не активируется и остаётся на сцене
+            }
             playerTransform = collision.transform;
-            
+            isActive = true;
 
-            isActive = true; // Активируем предмет
-            
+            // Добавляем предмет в инвентарь
+            ItemInventoryManager.Instance.AddItem(itemName, itemIcon, itemDescription);
 
-            GetComponent<Collider2D>().enabled = false; // Отключаем коллайдер
-            GetComponent<SpriteRenderer>().enabled = false; // Скрываем предмет
+            // Отключаем визуальное отображение предмета
+            GetComponent<Collider2D>().enabled = false;
+            GetComponent<SpriteRenderer>().enabled = false;
 
-            
-            
+            // Запускаем стрельбу
             InvokeRepeating(nameof(ShootProjectiles), 0f, shootInterval);
         }
     }
 
     private void ShootProjectiles()
     {
-        Debug.Log("ShootProjectiles вызван!");
+        if (!isActive || playerTransform == null) return;
 
-        if (!isActive || playerTransform == null)
-        {
-            Debug.Log("ShootProjectiles: isActive = " + isActive + ", playerTransform = " + playerTransform);
-            return;
-        }
-
-        // Определяем направление выстрела в зависимости от ориентации персонажа
+        // Определяем направление выстрела
         Vector2 baseDirection = playerTransform.right * Mathf.Sign(playerTransform.localScale.x);
-
         float angleStep = coneAngle / (numberOfProjectiles - 1);
         float startAngle = -coneAngle / 2;
 
@@ -54,18 +52,12 @@ public class ConeShotItem : MonoBehaviour
         {
             float angle = startAngle + angleStep * i;
             Vector2 direction = RotateVector(baseDirection, angle);
-            
 
             GameObject projectile = Instantiate(projectilePrefab, playerTransform.position, Quaternion.identity);
-            
-
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = direction * projectileSpeed;
-            }
+            if (rb != null) rb.linearVelocity = direction * projectileSpeed;
 
-            // Поворачиваем пулю в направлении движения
+            // Поворачиваем снаряд в направлении движения
             float angleZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             projectile.transform.rotation = Quaternion.Euler(0, 0, angleZ);
         }

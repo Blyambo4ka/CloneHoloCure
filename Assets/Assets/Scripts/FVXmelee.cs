@@ -18,7 +18,8 @@ public class AttackHit : MonoBehaviour
         if (collider.gameObject.CompareTag("Enemy") || collider.gameObject.CompareTag("Enemy2") ||
             collider.gameObject.CompareTag("Enemy3") || collider.gameObject.CompareTag("Enemy4") ||
             collider.gameObject.CompareTag("Enemy5") || collider.gameObject.CompareTag("Enemy6") ||
-            collider.gameObject.CompareTag("Enemy7"))
+            collider.gameObject.CompareTag("Enemy7") || collider.gameObject.CompareTag("Enemy8")
+            || collider.gameObject.CompareTag("Enemy9") || collider.gameObject.CompareTag("Enemy10"))
         {
             MovementPlayer player = FindObjectOfType<MovementPlayer>();
             if (player != null)

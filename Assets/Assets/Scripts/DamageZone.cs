@@ -7,7 +7,7 @@ public class DamageZone : MonoBehaviour
     private float duration;
     private float spawnTime; // Время создания зоны
     private float lastDamageTime; // Время последнего нанесенного урона
-    public float firstAttackDelay = 1f; // Задержка перед первым уроном
+    public float firstAttackDelay = 0.2f; // Задержка перед первым уроном
     public float damageCooldown = 1f; // КД между ударами
 
     public void Initialize(int zoneDamage, float zoneDuration)

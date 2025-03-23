@@ -150,6 +150,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinValue: 1
+  moveSpeed: 5
+  startMoveDelay: 0.5
+  startMoveRadius: 3
 --- !u!114 &8398473496467625160
 MonoBehaviour:
   m_ObjectHideFlags: 0

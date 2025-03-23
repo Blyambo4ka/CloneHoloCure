@@ -42,7 +42,13 @@ public class Enemy : MonoBehaviour
 
     public DropOnKill dropOnKill; // Ссылка на предмет, который добавляет шанс выпадения
 
-
+    private GameObject currentShieldVisual;
+    private int shieldHP; // Здоровье щита
+    private float shieldEndTime; // Время окончания действия щита
+    public string GetEnemyTag()
+        {
+            return gameObject.tag; // Возвращает тег объекта
+        }
 
 
 
@@ -77,8 +83,6 @@ public class Enemy : MonoBehaviour
         this.player = player;
         this.spawner = spawner;
         this.HP = hp;
-        this.experienceAmount = experienceAmount;
-        this.coinAmount = coinAmount;
         this.enemyIndex = enemyIndex;
         this.isInitialized = true; // Флаг инициализации
 
@@ -107,6 +111,59 @@ public class Enemy : MonoBehaviour
         }
         
     }
+    public void ApplyShield(GameObject shieldVisualPrefab, int shieldHP, float shieldDuration)
+    {
+        // Если щит уже активен, отменяем предыдущий
+        if (currentShieldVisual != null)
+        {
+            Destroy(currentShieldVisual);
+        }
+
+        // Создаем визуальный префаб щита
+        currentShieldVisual = Instantiate(shieldVisualPrefab, transform.position, Quaternion.identity, transform);
+        currentShieldVisual.transform.localPosition = Vector3.up * 0f; // Размещаем над врагом
+
+        // Устанавливаем параметры щита
+        this.shieldHP = shieldHP;
+        shieldEndTime = Time.time + shieldDuration;
+
+        // Запускаем проверку состояния щита
+        StartCoroutine(CheckShield());
+    }
+
+    private IEnumerator CheckShield()
+    {
+        while (Time.time < shieldEndTime && shieldHP > 0)
+        {
+            yield return null; // Ждем следующего кадра
+        }
+
+        // Удаляем щит, если время истекло или HP щита <= 0
+        RemoveShield();
+    }
+
+    private void RemoveShield()
+    {
+        if (currentShieldVisual != null)
+        {
+            Destroy(currentShieldVisual);
+            currentShieldVisual = null;
+        }
+    }
+
+    public void TakeShieldDamage(int damage)
+    {
+        if (currentShieldVisual != null)
+        {
+            shieldHP -= damage;
+            if (shieldHP <= 0)
+            {
+                RemoveShield(); // Удаляем щит, если его HP <= 0
+            }
+        }
+    }
+
+
 
     void OnTriggerStay2D(Collider2D collider)
     {
@@ -135,21 +192,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
-   public void TakeDamage(int damageAmount)
+    public virtual void TakeDamage(int damageAmount)
     {
         if (Time.time - lastDamageReceiveTime >= damageReceiveInterval)
         {
-            HP -= damageAmount;
-            lastDamageReceiveTime = Time.time;
-
-            if (animator != null)
+            if (currentShieldVisual != null)
             {
-                animator.SetTrigger("Hit"); // Запуск анимации
+                // Если щит активен, урон наносится щиту
+                TakeShieldDamage(damageAmount);
             }
+            else
+            {
+                // Если щита нет, урон наносится врагу
+                HP -= damageAmount;
+                lastDamageReceiveTime = Time.time;
 
-            // Создаём текст урона
-            ShowDamageText(damageAmount);
-            
+                if (animator != null)
+                {
+                    animator.SetTrigger("Hit"); // Запуск анимации
+                }
+
+                // Создаём текст урона
+                ShowDamageText(damageAmount);
+            }
         }
     }
 
@@ -218,10 +283,11 @@ public class Enemy : MonoBehaviour
     public virtual void KillEnemy()
     {
         if (isDead)
-        
             return;  // Если враг уже мертв, не повторяем убийство
 
-        isDead = true;  // Отметим врага как мертвого
+        isDead = true;  // Отмечаем врага как мертвого
+
+        
 
         // Уничтожаем все активные тексты урона
         foreach (GameObject damageText in activeDamageTexts)
@@ -233,13 +299,51 @@ public class Enemy : MonoBehaviour
         }
         activeDamageTexts.Clear(); // Очищаем список после уничтожения текстов
 
-        // Всё, что связано с уничтожением врага, теперь нужно делать в этом методе
+        // Запускаем анимацию смерти
+        if (animator != null)
+        {
+            animator.SetTrigger("Death");
+        }
+
+        // Отключаем взаимодействие врага, чтобы он не мог больше наносить урон
+        GetComponent<Collider2D>().enabled = false; // Отключение коллайдера
+        speed = 0; // Останавливаем движение
+
+        // Задержка перед уничтожением объекта для завершения анимации
+        StartCoroutine(DeathMovement());
+    }   
+
+    private IEnumerator DeathMovement()
+    {
+        float duration = 0.1f; // Длительность движения вправо
+        float elapsedTime = 0f;
+        float moveDistance = 0.2f; // Расстояние, на которое нужно сместиться вправо
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = startPosition + new Vector3(moveDistance, 0, 0); // Конечная позиция
+
+        while (elapsedTime < duration)
+        {
+            // Линейно интерполируем позицию от startPosition до targetPosition
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // После завершения движения запускаем эффекты уничтожения
+        StartCoroutine(HandleDeathEffects());
+    }
+    private IEnumerator HandleDeathEffects()
+    {
+        // Ждём завершения анимации смерти
+        yield return new WaitForSeconds(0.3f); // Замените 1.5f на длительность вашей анимации
+
+        // Эффекты уничтожения врага (монеты, опыт и т.п.)
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
         }
 
-        // Разлетающиеся монеты
         for (int i = 0; i < coinAmount; i++)
         {
             if (coinPrefab != null)
@@ -250,13 +354,11 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // Создание одного объекта опыта с передачей ему общей суммы опыта
         if (experiencePrefab != null)
         {
             Vector2 randomOffset = Random.insideUnitCircle * 0.5f; // Разлет в радиусе 0.5
             GameObject experience = Instantiate(experiencePrefab, transform.position + (Vector3)randomOffset, Quaternion.identity);
 
-            // Передаем количество опыта в объект
             Experience experienceScript = experience.GetComponent<Experience>();
             if (experienceScript != null)
             {
@@ -271,16 +373,18 @@ public class Enemy : MonoBehaviour
             dropOnKill.TryDrop(transform.position);
         }
 
+        // Возвращаем врага в пул или уничтожаем его
         if (spawner != null)
         {
             spawner.ReturnEnemyToPool(gameObject);
         }
         else
         {
-            Debug.LogError("Spawner not set!");
             Destroy(gameObject);
         }
     }
+
+
 
     // Метод для добавления случайного импульса объекту
     private void ApplyRandomForce(GameObject obj)
